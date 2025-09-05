@@ -1,0 +1,6 @@
+##fileformat=VCFv4.2
+##source=TestGenomeUploader
+#CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO
+1       12345   rs123   A       T       60      PASS    DP=100
+2       67890   rs456   G       C       50      PASS    DP=85
+X       13579   rs789   T       A       99      PASS    DP=120

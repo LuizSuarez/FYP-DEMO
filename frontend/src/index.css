@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* DNAlytics Design System - Scientific & Medical Theme */
+@layer base {
+  :root {
+    /* Core Colors - Light Theme */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 222 100% 61%;
+    --primary-foreground: 0 0% 100%;
+    --primary-muted: 222 50% 85%;
+    --secondary: 142 76% 36%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-muted: 142 50% 85%;
+    --accent: 262 83% 58%;
+    --accent-foreground: 0 0% 100%;
+    --accent-muted: 262 50% 85%;
+    --tertiary: 189 94% 43%;
+    --tertiary-foreground: 0 0% 100%;
+    --tertiary-muted: 189 50% 85%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 222 100% 61%;
+    --radius: 0.75rem;
+
+    /* DNA-inspired Gradients */
+    --gradient-dna: linear-gradient(135deg, hsl(222 100% 61%), hsl(142 76% 36%));
+    --gradient-helix: linear-gradient(45deg, hsl(222 100% 61%), hsl(262 83% 58%));
+    --gradient-medical: linear-gradient(180deg, hsl(189 94% 43%), hsl(222 100% 61%));
+    --gradient-analysis: linear-gradient(135deg, hsl(262 83% 58%), hsl(189 94% 43%));
+
+    /* Shadows */
+    --shadow-glow: 0 0 20px hsl(222 100% 61% / 0.3);
+    --shadow-data: 0 4px 20px hsl(222 50% 20% / 0.1);
+    --shadow-card: 0 2px 10px hsl(220 13% 69% / 0.1);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Dark Theme Colors */
+    --background: 222 47% 4%;
+    --foreground: 0 0% 98%;
+    --card: 222 47% 6%;
+    --card-foreground: 0 0% 98%;
+    --popover: 222 47% 6%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 222 100% 70%;
+    --primary-foreground: 222 47% 4%;
+    --primary-muted: 222 50% 15%;
+    --secondary: 142 76% 45%;
+    --secondary-foreground: 222 47% 4%;
+    --secondary-muted: 142 50% 15%;
+    --accent: 262 83% 70%;
+    --accent-foreground: 222 47% 4%;
+    --accent-muted: 262 50% 15%;
+    --tertiary: 189 94% 55%;
+    --tertiary-foreground: 222 47% 4%;
+    --tertiary-muted: 189 50% 15%;
+    --muted: 222 47% 10%;
+    --muted-foreground: 220 9% 65%;
+    --destructive: 0 84% 65%;
+    --destructive-foreground: 0 0% 100%;
+    --warning: 38 92% 60%;
+    --warning-foreground: 0 0% 100%;
+    --success: 142 76% 45%;
+    --success-foreground: 0 0% 100%;
+    --border: 222 47% 15%;
+    --input: 222 47% 15%;
+    --ring: 222 100% 70%;
+    /* Gradients */
+    --gradient-dna: linear-gradient(135deg, hsl(222 100% 70%), hsl(142 76% 45%));
+    --gradient-helix: linear-gradient(45deg, hsl(222 100% 70%), hsl(262 83% 70%));
+    --gradient-medical: linear-gradient(180deg, hsl(189 94% 55%), hsl(222 100% 70%));
+    --gradient-analysis: linear-gradient(135deg, hsl(262 83% 70%), hsl(189 94% 55%));
+    /* Shadows */
+    --shadow-glow: 0 0 30px hsl(222 100% 70% / 0.4);
+    --shadow-data: 0 4px 20px hsl(222 47% 4% / 0.5);
+    --shadow-card: 0 2px 10px hsl(222 47% 4% / 0.3);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  /* Apply borders and body colors using CSS variables */
+  *, *::before, *::after {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+}
+
+/* DNA & Scientific Animations */
+@layer utilities {
+  .dna-helix { background: var(--gradient-helix); }
+  .dna-gradient { background: var(--gradient-dna); }
+  .medical-gradient { background: var(--gradient-medical); }
+  .analysis-gradient { background: var(--gradient-analysis); }
+  .glow-effect { box-shadow: var(--shadow-glow); }
+  .data-shadow { box-shadow: var(--shadow-data); }
+  .card-shadow { box-shadow: var(--shadow-card); }
+  .animate-dna-pulse { animation: dna-pulse 3s ease-in-out infinite; }
+  .animate-helix-rotate { animation: helix-rotate 20s linear infinite; }
+  .animate-data-flow { animation: data-flow 2s ease-in-out infinite; }
+}
+
+@keyframes dna-pulse { 0%,100%{opacity:1}50%{opacity:0.7} }
+@keyframes helix-rotate { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes data-flow { 0%,100%{transform:translateX(0)}50%{transform:translateX(10px)} }
