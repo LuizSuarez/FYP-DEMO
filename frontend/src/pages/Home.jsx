@@ -12,7 +12,7 @@ export default function Landing() {
           <HeroSection />
           <FeaturesSection />
           <BenefitsSection />
-          <CTASection />
+          <CTASection h2="Ready to explore your Story?" p="Join thousands of users who trust DNAlytics for their genomic analysis and health insights" />
           <LandingFooter />
         </div>
     </Layout>

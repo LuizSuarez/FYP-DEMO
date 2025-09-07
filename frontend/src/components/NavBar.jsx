@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Notification } from "@/components/Notification";
 import { Dna } from "lucide-react";
+import { Link } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,9 +14,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/context/authContext";
+import { useNavigate } from "react-router-dom";
 
-export const Navbar = ({ withSidebar = false }) => {
+const Navbar = ({ withSidebar = false }) => {
   const [hidden] = useState(false);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const DnaLogo = () => (
     <div className="w-10 h-10 rounded-xl dna-gradient p-2.5 transition-transform duration-300 hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(56,189,248,0.8)]">
@@ -35,7 +40,7 @@ export const Navbar = ({ withSidebar = false }) => {
     >
       <div className="flex items-center justify-between h-full px-6">
         {/* Left: Sidebar + Logo */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 flex-1">
           {withSidebar && <SidebarTrigger />}
           <div className="flex items-center space-x-2 cursor-pointer">
             <DnaLogo />
@@ -45,29 +50,96 @@ export const Navbar = ({ withSidebar = false }) => {
           </div>
         </div>
 
-        {/* Right: Actions */}
-        <div className="flex items-center space-x-4">
-          <Notification />
-          <ThemeToggle />
+        {/* Middle: Navigation Links (always centered) */}
+        <nav className="hidden md:flex items-center space-x-8 flex-1 justify-center">
+          <Link
+            to="/"
+            className="text-white hover:text-indigo-400 transition-colors font-medium"
+          >
+            Home
+          </Link>
+          <Link
+            to="/about"
+            className="text-white hover:text-indigo-400 transition-colors font-medium"
+          >
+            About
+          </Link>
+          <Link
+            to="/services"
+            className="text-white hover:text-indigo-400 transition-colors font-medium"
+          >
+            Services
+          </Link>
+          <Link
+            to="/contact"
+            className="text-white hover:text-indigo-400 transition-colors font-medium"
+          >
+            Contact
+          </Link>
+        </nav>
 
-          {/* User Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Avatar className="cursor-pointer">
-                <AvatarImage src="/avatars/user.png" alt="User" />
-                <AvatarFallback>U</AvatarFallback>
-              </Avatar>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem className="text-red-500">
-                Logout
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        {/* Right: Actions */}
+        <div className="flex items-center space-x-4 flex-1 justify-end">
+          {/* ✅ Only show Notification + Profile if user logged in */}
+          {user ? (
+            <>
+              <Notification />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="cursor-pointer">
+                    <AvatarImage
+                      src={user.avatar || "/avatars/user.png"}
+                      alt="User"
+                    />
+                    <AvatarFallback>
+                      {user.name ? user.name[0].toUpperCase() : "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-40">
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile">Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/settings">Settings</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="text-red-500" onClick={() => {
+                    logout();
+                    navigate("/");
+                  }}>
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          ) : (
+            // ✅ Show login/signup when no user
+            <div className="flex space-x-3">
+              <Link
+                to="/login"
+                className="px-4 py-1.5 rounded-full text-white hover:bg-gradient-to-r hover:from-cyan-600 hover:to-teal-600 hover:text-white
+             dark:hover:from-teal-700 dark:hover:to-cyan-700 transition-colors duration-300
+               shadow-sm hover:shadow-md"
+              >
+                Sign In
+              </Link>
+              <Link
+                to="/register"
+                className="px-4 py-1.5 rounded-full text-white hover:bg-gradient-to-r hover:from-cyan-600 hover:to-teal-600 hover:text-white
+             dark:hover:from-teal-700 dark:hover:to-cyan-700 
+               transition-colors duration-300 shadow-sm hover:shadow-lg"
+              >
+                Sign Up
+              </Link>
+            </div>
+          )}
+
+          {/* Theme toggle stays always visible */}
+          <ThemeToggle />
         </div>
       </div>
     </motion.header>
   );
 };
+
+export default Navbar;

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useContext } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "../components/ui/button";
 import {
@@ -18,14 +17,15 @@ import {
   TabsTrigger,
 } from "../components/ui/tabs";
 import { Layout } from "../components/Layout";
-import { Dna, User, Users, Stethoscope } from "lucide-react";
+import { Dna, User, Users, Stethoscope, Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuthService } from "../services/authService"; // ✅ use service
+import { useAuthService } from "../services/authService";
 
 export default function Auth() {
   const { toast } = useToast();
   const [authMode, setAuthMode] = useState("login");
   const [userType, setUserType] = useState("user");
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -36,14 +36,9 @@ export default function Auth() {
   });
 
   const navigate = useNavigate();
-  const { register, login } = useAuthService(); // ✅ bring register + login from service
+  const { register, login } = useAuthService();
 
-  const userTypeIcons = {
-    user: User,
-    admin: Users,
-    clinician: Stethoscope,
-  };
-
+  const userTypeIcons = { user: User, admin: Users, clinician: Stethoscope };
   const userTypeDescriptions = {
     user: "Personal genomic analysis and health insights",
     admin: "Administrative tools and user management",
@@ -51,13 +46,9 @@ export default function Auth() {
   };
 
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.id]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  // ✅ Sign Up with backend
   const handleSignUp = async () => {
     try {
       const userData = {
@@ -70,32 +61,22 @@ export default function Auth() {
             : userType === "clinician"
             ? "Clinician"
             : "User",
-        // adjust mapping if backend expects "User", "Clinician", "Admin"
       };
 
-      console.log(userData);
       const res = await register(userData);
       console.log("Signup success:", res);
 
-      toast({
-        title: "Account created!",
-      });
+      toast({ title: "Account created!" });
 
-      // Navigate after signup
-      if (userType === "admin") {
-        navigate("/researcher-dashboard");
-      } else if (userType === "clinician") {
-        navigate("/clinician-dashboard");
-      } else {
-        navigate("/consent");
-      }
+      if (userType === "admin") navigate("/researcher-dashboard");
+      else if (userType === "clinician") navigate("/clinician-dashboard");
+      else navigate("/consent");
     } catch (err) {
       console.error("Signup error:", err);
       alert(err.message || "Signup failed");
     }
   };
 
-  // ✅ Sign In with backend
   const handleSignIn = async () => {
     try {
       const res = await login({
@@ -104,27 +85,33 @@ export default function Auth() {
       });
       console.log("Login success:", res);
 
-      toast({
-      title: "Welcome back!",
-    });
+      toast({ title: "Welcome back!" });
 
-    if (userType === "admin") {
-      navigate("/admin-dashboard");
-    } else if (userType === "clinician") {
-      navigate("/clinician-dashboard");
-    } else {
-      navigate("/dashboard");
+      if (userType === "admin") navigate("/admin-dashboard");
+      else if (userType === "clinician") navigate("/clinician-dashboard");
+      else navigate("/dashboard");
+    } catch (err) {
+      console.error("Login error:", err);
+      alert(err.message || "Login failed");
     }
-  } catch (err) {
-    console.error("Login error:", err);
-    alert(err.message || "Login failed");
-  }
+  };
+
+  // 👇 Handle Enter key globally
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      authMode === "login" ? handleSignIn() : handleSignUp();
+    }
   };
 
   return (
     <Layout showSidebar={false}>
-      <div className="min-h-screen flex items-center justify-center p-6">
+      <div
+        className="min-h-screen flex items-center justify-center p-6"
+        onKeyDown={handleKeyDown}
+      >
         <div className="w-full max-w-md">
+          {/* Header */}
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4">
               <div className="w-12 h-12 dna-gradient p-2.5">
@@ -139,13 +126,14 @@ export default function Auth() {
             </p>
           </div>
 
-          <Tabs value={authMode} onValueChange={(value) => setAuthMode(value)}>
+          {/* Tabs */}
+          <Tabs value={authMode} onValueChange={setAuthMode}>
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">Sign In</TabsTrigger>
               <TabsTrigger value="register">Sign Up</TabsTrigger>
             </TabsList>
 
-            {/* --- LOGIN TAB --- */}
+            {/* LOGIN TAB */}
             <TabsContent value="login">
               <Card>
                 <CardHeader>
@@ -166,16 +154,29 @@ export default function Auth() {
                       onChange={handleInputChange}
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 relative">
                     <Label htmlFor="password">Password</Label>
                     <Input
                       id="password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
                       required
                       value={formData.password}
                       onChange={handleInputChange}
                     />
+                    {formData.password.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-9 text-gray-500 hover:text-gray-700"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    )}
                   </div>
                   <Button
                     className="w-full dna-gradient"
@@ -196,7 +197,7 @@ export default function Auth() {
               </Card>
             </TabsContent>
 
-            {/* --- REGISTER TAB --- */}
+            {/* REGISTER TAB */}
             <TabsContent value="register">
               <Card>
                 <CardHeader>
@@ -206,7 +207,7 @@ export default function Auth() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* User Type Selection */}
+                  {/* Account type selection */}
                   <div className="space-y-2">
                     <Label>Account Type</Label>
                     <div className="grid grid-cols-1 gap-2">
@@ -241,7 +242,7 @@ export default function Auth() {
                     </div>
                   </div>
 
-                  {/* Form Fields */}
+                  {/* Name fields */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="firstName">First Name</Label>
@@ -265,6 +266,7 @@ export default function Auth() {
                     </div>
                   </div>
 
+                  {/* Email */}
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <Input
@@ -277,18 +279,33 @@ export default function Auth() {
                     />
                   </div>
 
-                  <div className="space-y-2">
+                  {/* Password with toggle */}
+                  <div className="space-y-2 relative">
                     <Label htmlFor="password">Password</Label>
                     <Input
                       id="password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       placeholder="Create a strong password"
                       required
                       value={formData.password}
                       onChange={handleInputChange}
                     />
+                    {formData.password.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-9 text-gray-500 hover:text-gray-700"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    )}
                   </div>
 
+                  {/* Clinician/Researcher fields */}
                   {userType === "clinician" && (
                     <div className="space-y-2">
                       <Label htmlFor="license">Medical License Number</Label>
@@ -300,7 +317,6 @@ export default function Auth() {
                       />
                     </div>
                   )}
-
                   {userType === "researcher" && (
                     <div className="space-y-2">
                       <Label htmlFor="institution">Institution</Label>
@@ -339,6 +355,7 @@ export default function Auth() {
             </TabsContent>
           </Tabs>
 
+          {/* Back to home */}
           <div className="mt-6 text-center">
             <Link
               to="/"

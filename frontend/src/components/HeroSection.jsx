@@ -42,16 +42,7 @@ const HeroSection = () => {
           >
             Unlock Your{" "}
             <span className="block relative bg-primary text-transparent bg-clip-text text-cyan-600 dark:text-cyan-300">
-              <motion.span
-                animate={{ y: [0, -10, 0], scale: [1, 1.05, 1] }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              >
                 Genetic Potential
-              </motion.span>
             </span>
           </motion.h1>
 

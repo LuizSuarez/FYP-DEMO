@@ -4,7 +4,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Notification } from "@/components/Notification";
 import { FloatingChatbot } from './FloatingChatbot';
 import { Dna } from "lucide-react";
-import { Navbar } from "./NavBar";
+import Navbar from "./NavBar";
 
 export const Layout = ({ children, showSidebar = true }) => {
   // DNA logo (consistent with Auth.jsx)

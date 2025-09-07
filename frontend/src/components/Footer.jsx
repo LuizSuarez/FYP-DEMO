@@ -86,7 +86,7 @@ const LandingFooter = () => {
               className="px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-primary"
             />
             <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-              <Button type="submit" className="px-3 py-2 text-white dna-gradient">
+              <Button type="submit" className="px-3 py-2 dna-gradient ripple-btn">
                 Subscribe
               </Button>
             </motion.div>
