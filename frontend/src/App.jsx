@@ -4,8 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Home";
-import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/Dashboard/Dashboard";
 import Upload from "./pages/Upload";
 import Analysis from "./pages/Analysis";
 import DoctorConnect from "./pages/DoctorConnect";
@@ -25,6 +24,11 @@ import About from "./pages/About";
 import Services from "./pages/Services";
 import Contact from "./pages/Contact";
 import ScrollToTop from "./components/ScrollTop";
+import SignUp from "./pages/Auth/Signup";
+import Login from "./pages/Auth/Login";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import VerifyEmail from "./pages/VerifyEmail";
 
 import NotFound from "./pages/NotFound";
 
@@ -39,11 +43,14 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/about" element={<About />} />
+          <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
           <Route path="/services" element={<Services />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/consent" element={<ConsentForm />} />
-          <Route path="/login" element={<Auth />} />
-          <Route path="/register" element={<Auth />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/upload" element={<Upload />} />
           <Route path="/clinician-dashboard" element={<ClinicianDashboard />} />

@@ -118,6 +118,8 @@ exports.runSequenceAnalysis = async (req, res) => {
 // ✅ GET /analysis/my?type=GenomeSequence&page=1&limit=10 (paginated)
 exports.listMyAnalyses = async (req, res) => {
   try {
+    console.log("DEBUG listMyAnalyses req.user:", req.user);
+    console.log("DEBUG listMyAnalyses req.query:", req.query);
     const userIdStr = req.user && (req.user._id || req.user.id);
     if (!userIdStr || !mongoose.Types.ObjectId.isValid(userIdStr)) {
       return res.status(401).json({ message: 'Unauthorized' });

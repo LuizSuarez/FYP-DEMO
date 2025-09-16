@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Upload, Search, Activity, Stethoscope, BarChart3, Heart } from "lucide-react";
 import CTASection from "../components/CTASection";
+import { Link } from "lucide-react";
 
 const services = [
   {

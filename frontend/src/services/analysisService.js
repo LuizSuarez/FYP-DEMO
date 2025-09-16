@@ -21,11 +21,15 @@ export const runSequenceAnalysis = async (fileId) => {
   return res.data;
 };
 
-// ✅ Get all my analyses with pagination
-export const getMyAnalyses = async (params = {}) => {
-  const res = await API.get("/my", { params });
+// ✅ Get all my analyses with explicit token in headers
+export const getMyAnalyses = async (token, params = {}) => {
+  const res = await API.get("/my", {
+    headers: { Authorization: `Bearer ${token}` },
+    params,
+  });
   return res.data;
 };
+
 
 // ✅ Get specific analysis by ID
 export const getAnalysis = async (analysisId) => {

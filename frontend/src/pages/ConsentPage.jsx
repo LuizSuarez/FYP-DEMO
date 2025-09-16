@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useConsent } from "../context/consentContext";
+import { useToast } from "@/hooks/use-toast";
 
 const ConsentForm = () => {
   const [agreed, setAgreed] = useState(false);
@@ -9,11 +9,12 @@ const ConsentForm = () => {
   const [date, setDate] = useState("");
   const navigate = useNavigate();
   const { handleSignConsent } = useConsent();
+  const { toast } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!agreed || !fullName || !date) {
-      alert("Please read and sign the consent form before proceeding.");
+      toast({ title: "Please read and sign the consent form before proceeding." });
       return;
     }
 
@@ -23,7 +24,7 @@ const ConsentForm = () => {
 
       navigate("/dashboard");
     } catch (err) {
-      alert("Failed to sign consent. Please try again.");
+      toast({ title: "Failed to sign consent. Please try again." });
     }
   };
   return (
@@ -79,7 +80,7 @@ const ConsentForm = () => {
           <p className="mt-3">
             <strong>7. Contact Information</strong>
             <br />
-            If you have questions, contact support@yourapp.com
+            If you have questions, contact dnalyticsofficial@gmail.com
           </p>
         </div>
 

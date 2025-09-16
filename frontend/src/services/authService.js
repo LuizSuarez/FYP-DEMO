@@ -32,15 +32,18 @@ export const authService = {
 
   // Forgot password
   forgotPassword: async (email) => {
-    const res = await API.post("/forgot-password", { email });
+    const res = await API.post("/forgot-password", { email, });
     return res.data;
   },
 
   // Reset password
   resetPassword: async (token, password) => {
-    const res = await API.post(`/reset-password/${token}`, { password });
-    return res.data;
-  },
+  const res = await axios.post(`/api/auth/reset-password/${token}`, {
+    password,
+  });
+  return res.data;
+},
+
 
   // Get dashboard data
   getDashboard: async () => {
@@ -62,6 +65,16 @@ export const authService = {
 export const useAuthService = () => {
   const { user, token, setUser, setToken, logout } = useAuth();
 
+  // Login
+  const login = async (credentials) => {
+    const res = await API.post("/login", credentials);
+    if (res.data.token) {
+      setToken(res.data.token);
+      setUser(res.data.user);
+    }
+    return res.data;
+  };
+
   // Register
   const register = async (formData) => {
     const res = await API.post("/register", formData);
@@ -72,14 +85,35 @@ export const useAuthService = () => {
     return res.data;
   };
 
-  // Login
-  const login = async (credentials) => {
-    const res = await API.post("/login", credentials);
-    if (res.data.token) {
+  const verifyEmail = async (token) => {
+    const res = await API.get(`/verify-email/${token}`);
+    return res.data;
+  };
+
+    const forgotPassword = async (email) => {
+    const res = await API.post("/forgot-password", { email });
+    return res.data;
+  };
+
+  const resetPassword = async (token, password) => {
+    const res = await API.post(`/reset-password/${token}`, { password });
+    return res.data;
+  };
+
+  // ✅ loginWithToken integrated
+  const loginWithToken = async (token) => {
+    const res = await API.get("/login-with-token", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (res.data.token && res.data.user) {
       setToken(res.data.token);
       setUser(res.data.user);
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
     }
-    return res.data;
+
+    return res.data; // { user, token }
   };
 
   // Logout
@@ -104,7 +138,11 @@ export const useAuthService = () => {
     token,
     register,
     login,
+    verifyEmail,
+    forgotPassword,
+    resetPassword,
     signout,
     authAxios,
+    loginWithToken,
   };
 };

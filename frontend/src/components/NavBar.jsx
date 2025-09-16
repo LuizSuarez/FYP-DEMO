@@ -80,6 +80,8 @@ const Navbar = ({ withSidebar = false }) => {
 
         {/* Right: Actions */}
         <div className="flex items-center space-x-4 flex-1 justify-end">
+          {/* Theme toggle stays always visible */}
+          <ThemeToggle />
           {/* ✅ Only show Notification + Profile if user logged in */}
           {user ? (
             <>
@@ -113,8 +115,7 @@ const Navbar = ({ withSidebar = false }) => {
               </DropdownMenu>
             </>
           ) : (
-            // ✅ Show login/signup when no user
-            <div className="flex space-x-3">
+            <>
               <Link
                 to="/login"
                 className="px-4 py-1.5 rounded-full text-white hover:bg-gradient-to-r hover:from-cyan-600 hover:to-teal-600 hover:text-white
@@ -124,18 +125,16 @@ const Navbar = ({ withSidebar = false }) => {
                 Sign In
               </Link>
               <Link
-                to="/register"
+                to="/signup"
                 className="px-4 py-1.5 rounded-full text-white hover:bg-gradient-to-r hover:from-cyan-600 hover:to-teal-600 hover:text-white
              dark:hover:from-teal-700 dark:hover:to-cyan-700 
                transition-colors duration-300 shadow-sm hover:shadow-lg"
               >
                 Sign Up
               </Link>
-            </div>
+            </>
           )}
 
-          {/* Theme toggle stays always visible */}
-          <ThemeToggle />
         </div>
       </div>
     </motion.header>

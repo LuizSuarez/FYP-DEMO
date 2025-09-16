@@ -73,18 +73,7 @@ const HeroSection = () => {
                      dark:hover:from-teal-300 dark:hover:to-cyan-400"
                 asChild
               >
-                <Link to="/register">Get Started Free</Link>
-              </Button>
-            </motion.div>
-
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button
-                variant="outline"
-                size="lg"
-                className="px-8 py-3 text-lg bg-slate-100 text-slate-900 hover:bg-slate-200 hover:text-black dark:bg-slate-800 dark:text-white dark:border-slate-600 dark:hover:bg-slate-700"
-                asChild
-              >
-                <Link to="/login">Sign In</Link>
+                <Link to="/about">Learn More</Link>
               </Button>
             </motion.div>
           </motion.div>
