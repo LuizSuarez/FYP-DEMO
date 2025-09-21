@@ -31,10 +31,15 @@ export const uploadGenomeFile = async (file, consentId, projectId = null) => {
   return res.data;
 };
 
-// ✅ Get user files
-export const getMyFiles = async (params = {}) => {
-  const res = await API.get("/my-files", { params });
-  return res.data;
+export const getMyFiles = async (token) => {
+  const res = await API.get("/my-files", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  // normalize the response so we always return just the array
+  return res.data?.data?.files || [];
 };
 
 // ✅ Download file by UUID

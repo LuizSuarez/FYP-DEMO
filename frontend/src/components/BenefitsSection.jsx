@@ -68,7 +68,7 @@ const BenefitsSection = () => {
                 size="lg"
                 asChild
               >
-                <Link to="/register">Start Your Analysis</Link>
+                <Link to="/signup">Start Your Analysis</Link>
               </Button>
             </motion.div>
           </motion.div>

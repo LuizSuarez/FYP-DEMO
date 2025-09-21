@@ -5,6 +5,7 @@ import { uploadGenomeFile } from "../services/genomeService";
 import { Upload as UploadIcon, CheckCircle, XCircle } from "lucide-react";
 import { useAuth } from "../context/authContext";
 import { useConsent } from "../context/consentContext";
+import { useNavigate } from "react-router-dom";
 
 function Upload() {
   const [file, setFile] = useState(null);
@@ -13,7 +14,8 @@ function Upload() {
   const [consentError, setConsentError] = useState(null);
   const [signingConsent, setSigningConsent] = useState(false);
   const { user } = useAuth();
-  const { consent, handleSignConsent } = useConsent();
+  const { handleSignConsent } = useConsent();
+  const navigate = useNavigate();
 
   if (!user) {
     return (
@@ -23,49 +25,7 @@ function Upload() {
     );
   }
 
-  const handleSignConsentClick = async () => {
-    try {
-      setSigningConsent(true);
-      setConsentError(null);
-      await handleSignConsent();
-      setNeedsConsent(false);
-      // After consent is signed, try to upload the file if one was selected
-      if (file) {
-        handleFileUpload();
-      }
-    } catch (err) {
-      console.error('Failed to sign consent:', err);
-      setConsentError(err.message || 'Failed to sign consent. Please try again.');
-    } finally {
-      setSigningConsent(false);
-    }
-  };
-
-  const handleFileUpload = async () => {
-    const consentId = localStorage.getItem("consentId");
-    if (!consentId) {
-      setNeedsConsent(true);
-      return;
-    }
-
-    setStatus("uploading");
-
-    try {
-      const res = await uploadGenomeFile(file, consentId);
-      console.log("✅ Upload success:", res);
-      setStatus("success");
-    } catch (err) {
-      console.error("❌ Upload failed:", err);
-      setStatus("error");
-    }
-  };
-
-  const handleChange = async (e) => {
-    const selectedFile = e.target.files[0];
-    setFile(selectedFile);
-    if (!selectedFile) return;
-
-    // Check if user has consent
+  const handleFileUpload = async (selectedFile) => {
     const consentId = localStorage.getItem("consentId");
     if (!consentId) {
       setNeedsConsent(true);
@@ -78,9 +38,19 @@ function Upload() {
       const res = await uploadGenomeFile(selectedFile, consentId);
       console.log("✅ Upload success:", res);
       setStatus("success");
+      // Redirect to /analysis after upload
+      navigate("/analysis");
     } catch (err) {
       console.error("❌ Upload failed:", err);
       setStatus("error");
+    }
+  };
+
+  const handleChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+    if (selectedFile) {
+      handleFileUpload(selectedFile);
     }
   };
 
@@ -105,67 +75,16 @@ function Upload() {
           <input type="file" onChange={handleChange} className="hidden" />
         </label>
 
-        {status === "uploading" && (
-          <motion.p
-            key="uploading"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mt-4 text-yellow-400"
-          >
-            Uploading...
-          </motion.p>
-        )}
+        {status === "uploading" && <p className="mt-4 text-yellow-400">Uploading...</p>}
         {status === "success" && (
-          <motion.p
-            key="success"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mt-4 flex items-center justify-center gap-2 text-green-400"
-          >
-            <CheckCircle className="w-5 h-5" /> Upload successful!
-          </motion.p>
+          <p className="mt-4 flex items-center justify-center gap-2 text-green-400">
+            <CheckCircle className="w-5 h-5" /> Upload successful! Redirecting...
+          </p>
         )}
         {status === "error" && (
-          <motion.p
-            key="error"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mt-4 flex items-center justify-center gap-2 text-red-400"
-          >
+          <p className="mt-4 flex items-center justify-center gap-2 text-red-400">
             <XCircle className="w-5 h-5" /> Upload failed. Try again.
-          </motion.p>
-        )}
-        
-        {needsConsent && (
-          <motion.div
-            key="consent"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mt-6 p-4 bg-yellow-600/20 border border-yellow-600/30 rounded-lg"
-          >
-            <p className="text-yellow-300 mb-3">You need to sign a consent form before uploading genome data.</p>
-            
-            {consentError && (
-              <div className="mb-3 p-2 bg-red-600/20 border border-red-600/30 rounded text-red-300 text-sm">
-                {consentError}
-              </div>
-            )}
-            
-            <button
-              onClick={handleSignConsentClick}
-              disabled={signingConsent}
-              className="bg-cyan-600 hover:bg-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded-md transition-colors"
-            >
-              {signingConsent ? (
-                <div className="flex items-center gap-2">
-                  <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
-                  Signing...
-                </div>
-              ) : (
-                'Sign Consent'
-              )}
-            </button>
-          </motion.div>
+          </p>
         )}
       </motion.div>
     </div>

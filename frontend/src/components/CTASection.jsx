@@ -35,7 +35,7 @@ const CTASection = ({ h2=false, p=false, button="Get Started Today" }) => {
           >
             <motion.div whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.95 }}>
               <Button size="lg" className="px-8 py-3 text-lg dna-gradient ripple-btn" asChild>
-                <Link to="/register">{button}</Link>
+                <Link to="/signup">{button}</Link>
               </Button>
             </motion.div>
           </motion.div>

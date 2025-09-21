@@ -1,5 +1,6 @@
 // src/services/analysisService.js
 import axios from "axios";
+import { useAuth } from "../context/authContext";
 
 // Create axios instance with base URL
 const API = axios.create({
@@ -16,10 +17,15 @@ API.interceptors.request.use((config) => {
 });
 
 // ✅ Run sequence analysis on a genome file
-export const runSequenceAnalysis = async (fileId) => {
-  const res = await API.post(`/sequence/${fileId}`);
+export const runSequenceAnalysis = async (fileId, token) => {
+  if (!fileId) throw new Error("fileId is required");
+  if (!token) throw new Error("Authentication token is required");
+  const res = await API.post(`/sequence/${fileId}`,
+  { headers: { Authorization: `Bearer ${token}` } }
+  );
   return res.data;
 };
+
 
 // ✅ Get all my analyses with explicit token in headers
 export const getMyAnalyses = async (token, params = {}) => {

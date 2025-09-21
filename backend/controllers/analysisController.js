@@ -1,6 +1,3 @@
-
-
-// controllers/analysisController.js
 const mongoose = require('mongoose');
 const { GridFSBucket } = require('mongodb');
 const fs = require('fs');
@@ -45,19 +42,23 @@ async function writeDecryptedToTemp(genomeDoc) {
   });
 }
 
-// ✅ POST /analysis/sequence/:fileId
 exports.runSequenceAnalysis = async (req, res) => {
   try {
-    const userIdStr = req.user && (req.user._id || req.user.id);
+    const userIdStr = req.user.id;
     if (!userIdStr || !mongoose.Types.ObjectId.isValid(userIdStr)) {
+      console.error("Unauthorized user:", req.user);
       return res.status(401).json({ message: 'Unauthorized' });
     }
     const userId = new mongoose.Types.ObjectId(userIdStr);
+    const { fileId } = req.params;
 
-    const { fileId } = req.params; // always UUID
     const genomeDoc = await GenomeFile.findOne({ fileId });
-    if (!genomeDoc) return res.status(404).json({ message: 'Genome file not found' });
+    if (!genomeDoc) {
+      console.error("Genome file not found:", fileId);
+      return res.status(404).json({ message: 'Genome file not found' });
+    }
     if (!genomeDoc.ownerUserId.equals(userId)) {
+      console.error("Access denied for user:", userIdStr);
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -67,48 +68,60 @@ exports.runSequenceAnalysis = async (req, res) => {
       analysisType: 'GenomeSequence',
       status: 'Running',
       results: {},
+      progress: 0,
     });
 
-    const { tmpDir, tmpFile } = await writeDecryptedToTemp(genomeDoc);
+    let tmpDir, tmpFile;
+    try {
+      ({ tmpDir, tmpFile } = await writeDecryptedToTemp(genomeDoc));
+      console.log("Temporary decrypted file path:", tmpFile);
+    } catch (e) {
+      console.error("Failed to decrypt/write temp file:", e);
+      await AnalysisResult.findByIdAndUpdate(analysis._id, {
+        status: 'Failed',
+        error: 'Failed to decrypt genome file'
+      });
+      return res.status(500).json({ message: 'Failed to decrypt genome file', analysisId: analysis._id });
+    }
 
-    const py = spawn('C:\\Python313\\python.exe', [
-      path.join(__dirname, '..', 'genome', 'analyzer.py'),
-      '--input', tmpFile
-    ], { env: process.env });
+    const pythonPath = process.env.PYTHON_PATH || 'python';
+    console.log("Using Python path:", pythonPath);
 
-    let out = '';
-    let errBuf = '';
+    const py = spawn(pythonPath, [path.join(__dirname, '..', 'genome', 'analyzer.py'), '--input', tmpFile], { env: process.env });
 
-    py.stdout.on('data', (d) => (out += d.toString()));
-    py.stderr.on('data', (d) => (errBuf += d.toString()));
+    let stdoutBuf = '';
+    let stderrBuf = '';
+
+    py.stdout.on('data', (chunk) => {
+      stdoutBuf += chunk.toString();
+    });
+
+    py.stderr.on('data', (chunk) => {
+      const msg = chunk.toString();
+      console.error('PYTHON STDERR:', msg);
+      stderrBuf += msg;
+    });
 
     py.on('close', async (code) => {
-      try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch {}
 
       if (code !== 0) {
-        analysis.status = 'Failed';
-        analysis.error = errBuf || `Python exited with code ${code}`;
-        await analysis.save();
-        return res.status(500).json({ message: 'Analysis failed', analysis });
+        console.error(`Python exited with code ${code}, stderr:`, stderrBuf);
+        await AnalysisResult.findByIdAndUpdate(analysis._id, { status: 'Failed', error: stderrBuf || `Python exited with code ${code}` });
+        return res.status(500).json({ message: 'Analysis failed', analysisId: analysis._id });
       }
 
-      let parsed;
       try {
-        parsed = JSON.parse(out);
+        if (!stdoutBuf) throw new Error("No final JSON output received from analyzer.");
+        const parsed = JSON.parse(stdoutBuf);  // Parse entire stdout once
+        await AnalysisResult.findByIdAndUpdate(analysis._id, { status: 'Completed', results: parsed, progress: 100 });
+        return res.json({ message: 'Analysis complete', analysisId: analysis._id });
       } catch (e) {
-        console.error("Analyzer output parse failed:", out);
-        analysis.status = 'Failed';
-        analysis.error = 'Invalid analyzer output';
-        await analysis.save();
-        return res.status(500).json({ message: 'Analysis failed (bad output)', analysis });
+        console.error("Failed to parse Python output:", stdoutBuf, e);
+        await AnalysisResult.findByIdAndUpdate(analysis._id, { status: 'Failed', error: 'Invalid analyzer output' });
+        return res.status(500).json({ message: 'Analysis failed (bad output)', analysisId: analysis._id });
       }
-
-      analysis.status = 'Completed';
-      analysis.results = parsed;
-      await analysis.save();
-
-      return res.json({ message: 'Analysis complete', analysis });
     });
+
   } catch (err) {
     console.error('runSequenceAnalysis error:', err);
     return res.status(500).json({ message: 'Server error', error: err.message });

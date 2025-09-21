@@ -6,7 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Home";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Upload from "./pages/Upload";
-import Analysis from "./pages/Analysis";
+import Analysis from "./pages/Analysis/Analysis";
+import AnalysisResults from "./pages/Analysis/AnalysisResult";
 import DoctorConnect from "./pages/DoctorConnect";
 import Predictions from "./pages/Predictions";
 import Files from "./pages/Files";
@@ -59,6 +60,7 @@ const App = () => (
             element={<ResearcherDashboard />}
           />
           <Route path="/analysis" element={<Analysis />} />
+          <Route path="/analysis/:analysisId" element={<AnalysisResults />} />
           <Route path="/predictions" element={<Predictions />} />
           <Route path="/doctor" element={<DoctorConnect />} />
           <Route path="/files" element={<Files />} />

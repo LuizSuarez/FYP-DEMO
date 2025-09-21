@@ -30,8 +30,6 @@ router.get(
   analysisController.getAnalysis
 );
 
-// ✅ Extra focused APIs for dashboards
-
 // Get only GC% values for current user (all analyses)
 router.get(
   '/gc-content/all',
