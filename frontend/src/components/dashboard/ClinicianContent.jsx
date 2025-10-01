@@ -3,12 +3,12 @@ import { Users, CheckCircle, Clock } from "lucide-react";
 import { RecentItemCard } from "./RecentItemCard";
 
 export function ClinicianContent({ data }) {
-  const patientItems = data.patients.map((patient, index) => ({
+  const patientItems = (data?.patients || []).map((patient, index) => ({
     content: (
       <>
         <div className="flex items-center space-x-3">
           <Users className="h-8 w-8 text-blue-600" />
-          <div>
+          <div>  
             <p className="font-medium">{patient.name}</p>
             <p className="text-sm text-gray-600">
               {patient.id} • Last visit: {patient.lastVisit}
@@ -34,7 +34,7 @@ export function ClinicianContent({ data }) {
     )
   }));
 
-  const testItems = data.clinicalTests.map((test, index) => ({
+  const testItems = (data?.clinicalTests || []).map((test, index) => ({
     content: (
       <div className="space-y-2">
         <div className="flex items-center justify-between">

@@ -39,8 +39,8 @@ export default function Login() {
 
       // Role-based navigation
       const role = res?.user?.role || "User";
-      if (role === "Admin") navigate("/admin-dashboard");
-      else if (role === "Clinician") navigate("/clinician-dashboard");
+      if (role === "Admin") navigate("/dashboard");
+      else if (role === "Clinician") navigate("/dashboard");
       else navigate("/dashboard");
     } catch (err) {
       console.error("Login error:", err);

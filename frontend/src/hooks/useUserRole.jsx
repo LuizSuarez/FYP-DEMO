@@ -25,7 +25,7 @@ export function useUserRole() {
 
   // Get user role from stored user data, default to 'patient' if 'user' type
   const getUserRole = () => {
-    if (!userData?.userType) return 'patient';
+    if (!userData?.userType) return 'user';
     return userData.userType === 'user' ? 'patient' : userData.userType;
   };
   

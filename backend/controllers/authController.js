@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const User = require("../models/User");
 const sendEmail = require("../utils/sendEmail");
+const Doctor = require('../models/Doctor');
 
 // Password validation function
 function validatePassword(password) {
@@ -39,7 +40,7 @@ function signToken(user) {
 
 // ✅ REGISTER
 exports.register = async function (req, res) {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, licenseNumber, specialty, hospital } = req.body;
 
   try {
     const passwordErrors = validatePassword(password);
@@ -70,6 +71,19 @@ exports.register = async function (req, res) {
     });
     await newUser.save();
 
+    let doctorProfile = null;
+    if (role === "Clinician") {
+      doctorProfile = await Doctor.create({
+        name,
+        specialty: specialty || "General",
+        hospital: hospital || "",
+        licenseNumber, // captured from frontend field
+        verified: false, // ✅ admin will verify later
+        userRef: newUser._id,
+        rating: 0,
+        consultations: 0,
+      });
+    }
     // Send verification email (non-blocking)
     const verifyURL = `${process.env.VITE_API_BACKEND}/api/auth/verify-email/${verificationToken}`;
     try {
@@ -106,7 +120,6 @@ exports.register = async function (req, res) {
 exports.verifyEmail = async (req, res) => {
   try {
     const { token } = req.params;
-
     // Find user by token
     const user = await User.findOne({
       verificationToken: token,
@@ -122,8 +135,14 @@ exports.verifyEmail = async (req, res) => {
     user.verificationToken = undefined;
     user.verificationTokenExpires = undefined;
     await user.save();
+    if (user.role === "Admin") {
+      return res.redirect(`${process.env.VITE_API_FRONTEND}/dashboard?status=success`);
+    } else if (user.role === "Clinician") {
+      return res.redirect(`${process.env.VITE_API_FRONTEND}/dashboard?status=success`);
+    } else {
+      return res.redirect(`${process.env.VITE_API_FRONTEND}/consent?status=success`);
+    }
 
-    return res.redirect(`${process.env.VITE_API_FRONTEND}/consent?status=success`);
   } catch (error) {
     console.error("❌ Error in verifyEmail:", error.message);
     return res.redirect(`${process.env.VITE_API_FRONTEND}/verify-email?status=failed`);

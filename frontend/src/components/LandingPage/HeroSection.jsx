@@ -76,6 +76,19 @@ const HeroSection = () => {
                 <Link to="/about">Learn More</Link>
               </Button>
             </motion.div>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                size="lg"
+                className="px-8 ml-4 py-3 text-lg bg-gradient-to-r from-teal-600 to-cyan-600 text-white 
+                     hover:from-teal-700 hover:to-cyan-700 
+                     dark:from-teal-400 dark:to-cyan-500 dark:text-slate-900
+                     dark:hover:from-teal-300 dark:hover:to-cyan-400"
+                asChild
+              >
+                <Link
+                 to="/dashboard">Go to Dashboard</Link>
+              </Button>
+          </motion.div>
           </motion.div>
 
           {/* Features */}

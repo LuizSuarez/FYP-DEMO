@@ -1,14 +1,24 @@
-// import axios from "axios";
+import axios from "axios";
 
-// const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
+const FLASK_API_URL = "http://localhost:5000"; // Flask backend
 
-// const api = axios.create({
-//   baseURL: API_URL,
-//   timeout: 15000
-// });
+// Send file directly to Flask
+const predictFromFile = async (file) => {
+  if (!file) throw new Error("No file provided");
 
-// export async function predictRisk(features, disease) {
-//   const payload = { features, metadata: { disease } };
-//   const res = await api.post("/predict", payload);
-//   return res.data;
-// }
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await axios.post(`${FLASK_API_URL}/predict`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+      timeout: 20000,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("❌ Flask prediction API error:", error.message);
+    throw error;
+  }
+}
+
+export { predictFromFile };

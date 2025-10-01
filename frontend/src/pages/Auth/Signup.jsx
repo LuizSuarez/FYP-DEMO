@@ -14,7 +14,6 @@ import { Layout } from "../../components/Layout";
 import { Dna, User, Users, Stethoscope, Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthService } from "../../services/authService";
-import { getUserProfile } from "../../services/userService";
 
 export default function SignUp() {
   const { toast } = useToast();
@@ -49,6 +48,7 @@ export default function SignUp() {
         name: `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
         password: formData.password,
+        licenseNumber: formData.license,
         role:
           userType === "admin"
             ? "Admin"
@@ -62,8 +62,8 @@ export default function SignUp() {
 
       toast({ title: "Account created!" });
 
-      if (userType === "admin") navigate("/researcher-dashboard");
-      else if (userType === "clinician") navigate("/clinician-dashboard");
+      if (userType === "admin") navigate(`/verify-email-admin/${res.verificationToken}`);
+      else if (userType === "clinician") navigate(`/verify-email-clinician/${res.verificationToken}`);
       else navigate(`/verify-email/${res.verificationToken}`);
     } catch (err) {
       console.error("Signup error:", err);
@@ -215,13 +215,13 @@ export default function SignUp() {
                   />
                 </div>
               )}
-              {userType === "researcher" && (
+              {userType === "admin" && (
                 <div className="space-y-2">
-                  <Label htmlFor="institution">Institution</Label>
+                  <Label htmlFor="adminCode">Admin Code</Label>
                   <Input
-                    id="institution"
-                    placeholder="Your research institution"
-                    value={formData.institution}
+                    id="adminCode"
+                    placeholder="Enter your admin code"
+                    value={formData.adminCode}
                     onChange={handleInputChange}
                   />
                 </div>

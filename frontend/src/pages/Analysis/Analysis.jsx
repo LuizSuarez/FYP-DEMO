@@ -12,9 +12,7 @@ import { runSequenceAnalysis, getMyAnalyses } from "../../services/analysisServi
 import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { getMyFiles } from "../../services/genomeService";
-import DnaLoader from "../../components/DnaLoader";
 import { useToast } from "@/hooks/use-toast";
-import DnaDoubleHelixLoader from "../../components/DnaLoader";
 import DnaHelixLoader from "../../components/DnaLoader";
 
 const analysisTypes = [

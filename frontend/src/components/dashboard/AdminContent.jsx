@@ -4,8 +4,8 @@ import { Database, CheckCircle, Clock } from "lucide-react";
 import { InfoCard } from "./InfoCard";
 import { RecentItemCard } from "./RecentItemCard";
 
-export function ResearcherContent({ data }) {
-  const projectItems = data.researchProjects.map((project, index) => ({
+export function AdminContent({ data }) {
+  const projectItems = (data?.researchProjects || []).map((project, index) => ({
     content: (
       <div className="space-y-3">
         <div className="flex items-center justify-between">
@@ -30,7 +30,7 @@ export function ResearcherContent({ data }) {
     className: "space-y-3 p-4 border rounded-lg transition-all duration-300 hover:shadow-md hover:scale-102"
   }));
 
-  const datasetItems = data.datasets.map((dataset, index) => ({
+  const datasetItems = (data?.datasets || []).map((dataset, index) => ({
     content: (
       <>
         <div className="flex items-center space-x-3">

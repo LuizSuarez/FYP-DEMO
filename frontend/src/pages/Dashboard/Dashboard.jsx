@@ -3,20 +3,19 @@ import { Button } from "../../components/ui/button";
 import { FloatingChatbot } from "../../components/FloatingChatbot";
 import { Upload } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useUserRole } from "../../hooks/useUserRole";
 import { getDashboardData } from "../../components/dashboard/dashboardData";
 import { DashboardHeader } from "../../components/dashboard/DashboardHeader";
 import { StatsCard } from "../../components/dashboard/StatsCard";
 import { StatsGrid } from "../../components/dashboard/StatsGrid";
 import { QuickActionButton } from "../../components/dashboard/QuickActionButton";
 import { QuickActionsCard } from "../../components/dashboard/QuickActionsCard";
-import { PatientContent } from "../../components/dashboard/PatientContent";
+import { PatientContent } from "../../components/dashboard/UserContent";
 import { ClinicianContent } from "../../components/dashboard/ClinicianContent";
-import { ResearcherContent } from "../../components/dashboard/ResearcherContent";
+import { AdminContent } from "../../components/dashboard/AdminContent";
 import { useAuth } from "../../context/authContext";
 
 export default function Dashboard() {
-  const { userRole, loading } = useUserRole();
+  const { loading, user } = useAuth();
   const userdata = useAuth();
 
   if (loading) {
@@ -32,21 +31,34 @@ export default function Dashboard() {
     );
   }
 
+  if (!user) {
+    return (
+      <Layout>
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-gray-600">No user data found. Please log in.</p>
+        </div>
+      </Layout>
+    );
+  }
+
+  const userRole = user.role;
   const dashboardData = getDashboardData(userRole);
 
+  console.log("User Role:", userRole);
+  console.log("user data:", userdata);
   const renderRoleSpecificContent = () => {
     switch (userRole) {
-      case 'clinician':
-        return <ClinicianContent data={dashboardData} />;
-      case 'researcher':
-        return <ResearcherContent data={dashboardData} />;
-      default:
+      case 'user':
         return <PatientContent data={dashboardData} />;
+      case 'Clinician':
+        return <ClinicianContent data={dashboardData} />;
+      case 'Admin':
+        return <AdminContent data={dashboardData} />;
     }
   };
 
   const getHeaderActions = () => {
-    if (userRole === 'patient') {
+    if (userRole === 'user') {
       return [
         <Button key="upload" asChild className="dna-gradient">            
           <Link to="/upload"><Upload className="h-4 w-4 mr-2" />Upload Data</Link>
@@ -58,41 +70,40 @@ export default function Dashboard() {
 
   const getQuickActionsTitle = () => {
     switch (userRole) {
-      case 'clinician':
-        return "Clinical Tools";
-      case 'researcher':
-        return "Research Tools";
-      default:
+      case 'User':
         return "Quick Actions";
+      case 'Clinician':
+        return "Clinical Tools";
+      case 'Admin':
+        return "Admin Tools";
     }
   };
 
   const getQuickActionsDescription = () => {
     switch (userRole) {
-      case 'clinician':
-        return "Patient care and analysis tools";
-      case 'researcher':
-        return "Advanced analysis and collaboration tools";
-      default:
+      case 'User':
         return "Common tasks and next steps";
+      case 'Clinician':
+        return "Patient care and analysis tools";
+      case 'Admin':
+        return "Administrative tools and user management";
     }
   };
 
   const getWelcomeTitle = () => {
-    const title = userRole === 'clinician' ? 'Dr.' : '';
-    console.log(userdata);
-    const firstName = userdata.user.name;
+    const title = userRole === 'Clinician' ? 'Dr.' : '';
+    const firstName = userdata.user?.name || "User";
     return `${dashboardData.title} ${title} ${firstName}`.trim();
   };
 
   const getWelcomeSubtitle = () => {
     let subtitle = dashboardData.subtitle;
-    
-    if (userRole === 'clinician' && userdata?.license) {
+
+    if (userRole === 'Clinician' && userdata?.license) {
       subtitle += ` • License: ${userdata.license}`;
     }
-    
-    if (userRole === 'researcher' && userdata?.institution) {
+
+    if (userRole === 'Admin' && userdata?.institution) {
       subtitle += ` at ${userdata.institution}`;
     }
     

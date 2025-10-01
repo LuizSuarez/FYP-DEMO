@@ -11,14 +11,15 @@ import AnalysisResults from "./pages/Analysis/AnalysisResult";
 import DoctorConnect from "./pages/DoctorConnect";
 import Predictions from "./pages/Predictions";
 import Files from "./pages/Files";
-import Variants from "./pages/Variants";
+import Variants from "./pages/Variants/Variants";
+import VariantsResult from "./pages/Variants/VariantsResult";
 import Reports from "./pages/Reports";
 import Visualizations from "./pages/Visualizations";
 import Lifestyle from "./pages/LifeStyle";
 import ReferenceDatabase from "./pages/ReferenceDatabase";
 import Privacy from "./pages/Privacy";
 import Settings from "./pages/Settings";
-import ClinicianDashboard from "./pages/ClinicianDashboard";
+// import ClinicianDashboard from "./pages/ClinicianDashboard";
 import ResearcherDashboard from "./pages/ResearcherDashboard";
 import ConsentForm from "./pages/ConsentPage";
 import About from "./pages/About";
@@ -29,7 +30,9 @@ import SignUp from "./pages/Auth/Signup";
 import Login from "./pages/Auth/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import VerifyEmail from "./pages/VerifyEmail";
+import VerifyEmail from "./pages/Auth/VerifyEmailUser";
+import VerifyEmailAdmin from "./pages/Auth/VerifyEmailAdmin";
+import VerifyEmailClinician from "./pages/Auth/VerifyEmailClinician";
 
 import NotFound from "./pages/NotFound";
 
@@ -45,6 +48,8 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/about" element={<About />} />
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          <Route path="/verify-email-admin/:token" element={<VerifyEmailAdmin />} />
+          <Route path="/verify-email-clinician/:token" element={<VerifyEmailClinician />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/login" element={<Login />} />
@@ -54,7 +59,7 @@ const App = () => (
           <Route path="/consent" element={<ConsentForm />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/upload" element={<Upload />} />
-          <Route path="/clinician-dashboard" element={<ClinicianDashboard />} />
+          {/* <Route path="/clinician-dashboard" element={<ClinicianDashboard />} /> */}
           <Route
             path="/researcher-dashboard"
             element={<ResearcherDashboard />}
@@ -73,7 +78,7 @@ const App = () => (
           <Route path="/settings" element={<Settings />} />
 
           <Route path="/variants" element={<Variants />} />
-
+          <Route path="/variants/:fileId" element={<VariantsResult />} />
           {/* <Route path="/profile" element={<Profile />} /> */}
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

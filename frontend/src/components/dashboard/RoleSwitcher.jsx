@@ -5,7 +5,7 @@ import { Users, Stethoscope, FlaskConical } from "lucide-react";
 const roleConfig = {
   patient: { label: "Patient", icon: Users, color: "bg-blue-500" },
   clinician: { label: "Clinician", icon: Stethoscope, color: "bg-green-500" },
-  researcher: { label: "Researcher", icon: FlaskConical, color: "bg-purple-500" }
+  admin: { label: "Admin", icon: FlaskConical, color: "bg-purple-500" }
 };
 
 export function RoleSwitcher({ currentRole, onRoleChange }) {

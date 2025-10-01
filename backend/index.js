@@ -24,6 +24,10 @@ app.use('/api/users', require('./routes/userRoute'));
 app.use('/api/analysis', require('./routes/analysisRoutes'));
 app.use('/api/projects', require('./routes/projectRoutes'));
 app.use('/api/deletion-logs', require('./routes/deletionLogRoutes'));
+app.use('/api/variants', require('./routes/variantRoutes'));
+app.use('/api/doctors', require('./routes/doctorRoutes'));
+app.use('/api/doctor-connect', require('./routes/doctorConnectRoutes'));
+
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
